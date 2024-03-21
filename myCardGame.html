@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>myCardGame</title>
+    <style>
+        img {
+            width: 50px;
+            height: 80px;
+        }
+
+        button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="buttons">
+        <button id="gameStart">게임스타트</button>
+        <button id="gameStory" onclick="location.href='gamelogic.html'">게임 룰 보러가기</button>
+        <!-- <button id="hint">힌트</button> -->
+        <button id="gameTable">정답보기</button>
+        <!-- <button id="gotoRank">랭킹보러가기</button> -->
+        <button id="countAll">시도횟수 : </button>
+    </div>
+    <div id="gamecard"></div>
+</body>
+<script>
+    window.onload = function () {
+        //향후 기능 추가
+        //원장님 사진나오면 뭐라도 다 맞게. 원장님카드 + 특정카드면 유지, and 특정카드의 짝까지 앞면으로
+        //힌트. 랜덤으로 2개 열었다가 닫히게. 
+        //1명이서 할지 =>랭킹 // 2명이서 플레이할지 선택하게 하기. 따로 
+
+        // let player1 = {
+        //     name : player1,
+        //     맞힌횟수 : 0
+        // }; //플레이어1
+
+        // let player2 = {
+        //     name : player2,
+        //     맞힌횟수 : 0   
+        // }; //플레이어2 
+
+        //player가 1명이면 player1만 맞출때마다 player1만 ++ 
+        //player가 2명이면 player1인지 player2인지 체크해서 ++ 
+        //맞추면 한번 더 선택 가능
+
+        let player1_count = 0; 
+
+        let player2_count = 0;
+
+        let countAll = 0; //전체 클릭 시도한 횟수
+
+        let game_endcount = 0; //게임 종료용 변수. 18이 되면 게임 종료
+
+        let tmp_count = 0; //첫번째 카드인지 체크용 변수 
+
+        let prevent_fastClick = 0; //이미지 3번이상 클릭 방지용 변수 
+
+        let not_doubleClick; //이미지 더블클릭 방지용 변수 
+
+        let first_card; //첫번째 카드 저장용 변수  
+
+        let second_card; //두번째 카드 저장용 변수
+
+        let initial_table = ""; //초기 테이블 만들기 위한 변수 
+
+        initial_table += `<div id = "gamecard"></div><div id="initialCard"><div>`
+
+        for (let i = 0; i < 13; i++) {
+            initial_table += `<img src = "${i}.png"> `  
+        }
+        initial_table += "</div><div>"
+        for (let i = 13; i < 26; i++) {
+            initial_table += `<img src = "${i}.png"> `
+        }
+        initial_table += "</div><div>"
+        for (let i = 26; i < 39; i++) {
+            initial_table += `<img src = "${i}.png"> `
+        }
+        initial_table += "</div><div>"
+        for (let i = 39; i < 52; i++) {
+            initial_table += `<img src = "${i}.png"> `
+        }
+        initial_table += "</div></div></body>"
+
+        //만든 메인화면 카드테이블 집어넣기 
+        let initial_start_table = document.getElementById("gamecard");
+
+        initial_start_table.innerHTML = initial_table;
+
+        //게임스타트 버튼 주소 가져옴
+        const $btn_gameStart = document.getElementById("gameStart");
+
+        //게임스타트시 카드 만들어줄 루트 요소 주소 가져옴 
+        const $initialCard = document.getElementById("initialCard");
+
+        //시도횟수 버튼 주소 가져옴. 
+        const $countAll = document.getElementById("countAll");
+
+        //gameStart시 innerHTML 넣어줄 div 태그 가져옴
+        const $gamecard = document.getElementById("gamecard");
+
+        //정답보기 버튼 주소 가져옴
+        const $btn_gameTable = document.getElementById("gameTable");
+
+        // 카드 총 52장 섞기 
+        let tmpArr = [];
+
+        for (let i = 0; i < 52; i++) {
+            tmpArr[i] = i;
+        }
+
+        tmpArr.sort(function (a, b) {
+            return Math.random() - 0.5
+        });
+
+        //길이가 36인 배열 생성. 숫자는 랜덤으로 0~51중 18개를 2개씩 할당. 
+        let final_GameCard = [];
+
+        //홀수짝수 번갈아 넣기 
+        for (let i = 0; i < 18; i++) {
+            final_GameCard[i * 2] = tmpArr[i];
+            final_GameCard[i * 2 + 1] = tmpArr[i];
+        }
+
+        //카드 전체 한번 더 섞기 
+        final_GameCard.sort(function (a, b) {
+            return Math.random() - 0.5
+        });
+
+
+        //4x9 게임 테이블 생성하고 카드 할당  
+        let gameTable = [[], [], [], []];
+        let last = 0; //1차원 배열 요소 꺼내줄 변수
+
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 9; j++) {
+                gameTable[i][j] = final_GameCard[last];
+                last++;
+            }
+        }
+
+        // 두 카드가 다를시 다시 뒷면으로 뒤집는 함수
+        function flip() {
+            //필요에따라 막기. 
+            first_card.src = "hidden.png";
+            second_card.src = "hidden.png";
+            prevent_fastClick = 0;
+            return;
+        }
+
+        //카드가 앞면인지 확인하는 함수. 앞면일때 true, 뒷면일때 false 반환 
+        function isFront(card) {
+            return (card.src !== "hidden.png");
+        }
+
+        //첫번째 카드인지 확인하는 함수 
+        function isFirstCard() {
+            return (tmp_count === 0);
+        }
+
+        //비교해서 같은지 확인하는 함수. 같으면 true 다르면 false 반환 
+        function compare(a, b) {
+            return (a === b);
+        }
+
+        //카드 클릭할때 실행될 함수.  
+        function onClickimg(event) {
+            if (!isFront(this)) return; // 이미 2장 일치되어 앞면유지중인 카드이거나 첫번째카드이면서 앞면이면 return
+            if (not_doubleClick === this) {
+                not_doubleClick = null ;
+                return; }
+            prevent_fastClick++;
+            not_doubleClick = this;
+            if (prevent_fastClick > 2) return;
+
+            countAll++; //총 시도횟수 증가
+            $countAll.innerText = `시도횟수 : ${countAll}`;
+
+            //클릭된 카드 앞면으로 바꾸기 
+            this.src = `${final_GameCard[this.id]}.png`;
+
+            // 첫번째 카드일때 실행될 코드 
+            if (isFirstCard()) {
+                first_card = this;
+                tmp_count++; //첫번째 카드인지 체크용 변수 ++
+                return;
+            }
+
+            prevent_fastClick++;
+
+            //두번째 카드이면서 첫번째 카드랑 같을때  
+            if (!isFirstCard() && compare(first_card.src, this.src)) {
+                second_card = this;
+                game_endcount++; //게임종료 카운트 증가
+                tmp_count = 0;
+                first_card.removeEventListener("click", onClickimg);
+                second_card.removeEventListener("click", onClickimg);
+                prevent_fastClick = 0;
+                return;
+            }
+
+            //두번째 카드이면서 첫번째 카드랑 다를때
+            if (!isFirstCard() && !compare(first_card.src, this.src)) {
+                second_card = this;
+                prevent_fastClick++;
+                tmp_count = 0;
+                setTimeout(flip, 800);
+                return;
+            }
+        }
+
+        //게임스타트 
+        function gameStart() {
+            // player_number = prompt("플레이어 숫자를 입력하세요.(1 or 2)", 1);
+
+            // if (!(player_number == 1 || player_number == 2)) gameStart(); 
+
+            $initialCard.innerHTML = "";
+
+            //게임 테이블 만들기 
+            let FromtableSource = "";
+
+            FromtableSource += "<div>" + "<table border=" + 1 + ">"
+            for (let q = 0, i = 0; q < 4; q++) {
+                FromtableSource += "<tr>"
+                for (let w = 0; w < 9; w++) {
+                    FromtableSource += "<td>" + `<img id = "${i}" ` + "src = hidden.png>" + "</td>";
+                    i++;
+                }
+                FromtableSource += "</tr>"
+            }
+            FromtableSource += "</table>" + "</div>";
+            $gamecard.innerHTML = FromtableSource;
+
+            let imgs = document.getElementsByTagName("img");
+
+            for (let i = 0; i < imgs.length; i++) {
+                imgs[i].addEventListener("click", onClickimg);
+            }
+        }
+
+        //정답 table 만들기 
+        function makeTable() {
+            let FromtableSource = "";
+            FromtableSource += "<div>"+"<table border=" + 1 + ">"
+            for (let i = 0; i < 4; i++) {
+                FromtableSource += "<tr>"
+                for (let j = 0; j < 9; j++) {
+                    FromtableSource += "<td>" + "<img src =" + gameTable[i][j] + ".png>" + "</td>";
+                }
+                FromtableSource += "</tr>"
+            }
+            FromtableSource += "</table>" + "</div>";
+            $gamecard.innerHTML = FromtableSource;
+        }
+        $btn_gameTable.addEventListener("click", makeTable);
+        $btn_gameStart.addEventListener("click", gameStart);
+    }
+</script>
+</html>
