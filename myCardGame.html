@@ -71,19 +71,19 @@
         initial_table += `<div id = "gamecard"></div><div id="initialCard"><div>`
 
         for (let i = 0; i < 13; i++) {
-            initial_table += `<img src = "${i}.png"> `  
+            initial_table += `<img src = "img/${i}.png"> `  
         }
         initial_table += "</div><div>"
         for (let i = 13; i < 26; i++) {
-            initial_table += `<img src = "${i}.png"> `
+            initial_table += `<img src = "img/${i}.png"> `
         }
         initial_table += "</div><div>"
         for (let i = 26; i < 39; i++) {
-            initial_table += `<img src = "${i}.png"> `
+            initial_table += `<img src = "img/${i}.png"> `
         }
         initial_table += "</div><div>"
         for (let i = 39; i < 52; i++) {
-            initial_table += `<img src = "${i}.png"> `
+            initial_table += `<img src = "img/${i}.png"> `
         }
         initial_table += "</div></div></body>"
 
@@ -147,15 +147,15 @@
         // 두 카드가 다를시 다시 뒷면으로 뒤집는 함수
         function flip() {
             //필요에따라 막기. 
-            first_card.src = "hidden.png";
-            second_card.src = "hidden.png";
+            first_card.src = "img/hidden.png";
+            second_card.src = "img/hidden.png";
             prevent_fastClick = 0;
             return;
         }
 
         //카드가 앞면인지 확인하는 함수. 앞면일때 true, 뒷면일때 false 반환 
         function isFront(card) {
-            return (card.src !== "hidden.png");
+            return (card.src !== "img/hidden.png");
         }
 
         //첫번째 카드인지 확인하는 함수 
@@ -182,7 +182,7 @@
             $countAll.innerText = `시도횟수 : ${countAll}`;
 
             //클릭된 카드 앞면으로 바꾸기 
-            this.src = `${final_GameCard[this.id]}.png`;
+            this.src = `img/${final_GameCard[this.id]}.png`;
 
             // 첫번째 카드일때 실행될 코드 
             if (isFirstCard()) {
@@ -229,7 +229,7 @@
             for (let q = 0, i = 0; q < 4; q++) {
                 FromtableSource += "<tr>"
                 for (let w = 0; w < 9; w++) {
-                    FromtableSource += "<td>" + `<img id = "${i}" ` + "src = hidden.png>" + "</td>";
+                    FromtableSource += "<td>" + `<img id = "${i}" ` + "src = img/hidden.png>" + "</td>";
                     i++;
                 }
                 FromtableSource += "</tr>"
@@ -251,7 +251,7 @@
             for (let i = 0; i < 4; i++) {
                 FromtableSource += "<tr>"
                 for (let j = 0; j < 9; j++) {
-                    FromtableSource += "<td>" + "<img src =" + gameTable[i][j] + ".png>" + "</td>";
+                    FromtableSource += "<td>" + "<img src = img/" + gameTable[i][j] + ".png>" + "</td>";
                 }
                 FromtableSource += "</tr>"
             }
