@@ -6,14 +6,44 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>myCardGame</title>
     <style>
-        img {
-            width: 50px;
-            height: 80px;
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%; /* 화면 전체 높이 사용 */
+            display: flex;
+            flex-direction: column; /* 세로 방향 정렬 */
+            align-items: center; /* 가로 중앙 정렬 */
+            justify-content: flex-start; /* 상단 정렬 */
+            font-family: Arial, sans-serif; /* 폰트 설정 */
+        }
+        
+        #buttons {
+            display: flex;
+            justify-content: center; /* 버튼을 가운데 정렬 */
+            width: 100%; /* 너비 전체 사용 */
+            margin: 20px 0; /* 상하 마진 */
         }
 
         button {
-            margin-left: 10px;
+            padding: 10px 20px; /* 버튼 패딩 */
+            margin-left: 10px; /* 왼쪽 마진 */
+            font-size: 16px; /* 글씨 크기 */
+            cursor: pointer; /* 커서 모양 */
         }
+
+        #gamecard {
+            display: flex;
+            flex-wrap: wrap; /* 내용이 넘치면 다음 줄로 */
+            justify-content: center; /* 가운데 정렬 */
+            width: 100%; /* 너비 전체 사용 */
+        }
+
+        img {
+            width: 80px; /* 이미지 너비 */
+            height: auto; /* 높이 자동 조절 */
+            margin: 5px; /* 이미지 간 간격 */
+        }
+        
     </style>
 </head>
 <body>
