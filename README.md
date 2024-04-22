@@ -6,7 +6,9 @@
 
 ### 전체 코드 : 250줄
 
-![cardgamecaputre](https://github.com/tkdgns11/myCardGame/assets/134262318/0f7aa60e-2dcb-4b0d-b9a0-a915c53f521a)
+![cardgamecapture1](https://github.com/tkdgns11/myCardGame/assets/134262318/d18802f0-5bfe-46c0-8cec-d5b5e55468c1)
+
+<img width="1728" alt="cardgamecapture3" src="https://github.com/tkdgns11/myCardGame/assets/134262318/a219d0f2-d507-4b87-8fab-e66577c584ef">
 
 ![cardgamecapture2](https://github.com/tkdgns11/myCardGame/assets/134262318/4524aaf8-7da7-4ab3-854a-7cfcb736f8fd)
 
